@@ -1,12 +1,20 @@
 # APOD-BOT
-A simple that retrives [APOD Images](https://apod.nasa.gov/apod/astropix.html) and posts them in your Discord Channel
+A simple bot that retrives [APOD Images](https://apod.nasa.gov/apod/astropix.html) and posts them in your Discord Channel
 
 <hr/>
 
 ## Commands:
 
 * `@today`  - Returns the APOD Image for Today
+
+#### possibile error:
+![image](https://user-images.githubusercontent.com/56450558/202884890-28a1ab2f-13b3-4f63-b724-28fb47e9510a.png)
+
 * `@archive <Date: DD-MM-YYYY>` - Returns Historic Images
+
+
+![image](https://user-images.githubusercontent.com/56450558/202884864-b441833d-563f-4783-bca4-9a67fcd82d3e.png)
+
 
 ## Installation
 
