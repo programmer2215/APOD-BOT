@@ -7,8 +7,8 @@ A simple bot that retrives [APOD Images](https://apod.nasa.gov/apod/astropix.htm
 
 * `@today`  - Returns the APOD Image for Today
 
-#### possibile error:
-![image](https://user-images.githubusercontent.com/56450558/202884890-28a1ab2f-13b3-4f63-b724-28fb47e9510a.png)
+
+![image](https://user-images.githubusercontent.com/56450558/217480673-d2f29b91-00bc-4841-9589-5c7666b9675d.png)
 
 * `@archive <Date: DD-MM-YYYY>` - Returns Historic Images
 
