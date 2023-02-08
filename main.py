@@ -7,16 +7,20 @@ from bs4 import BeautifulSoup as soup
 
 bot = commands.Bot(command_prefix="@", description="The description")
 
-def get_pic(url):
-  data = req.get(url)
-  parser = soup(data.text, 'html.parser')
-  try:
-    rel_url = parser.find('img')['src']
-    result = f"https://apod.nasa.gov/{rel_url}"
-  except:
-    result = ""
-  
-  return result
+
+def get_pic(date, url):
+    data = req.get(url)
+    parser = soup(data.text, 'html.parser')
+    try:
+        rel_url = parser.find('img')['src']
+        title = parser.find('b').text
+        result = (f"https://apod.nasa.gov/{rel_url}",
+                  f"**[{date}] {title}**\n")
+    except:
+        result = ()
+
+    return result
+
 
 '''def current_img():
   now = dt.now()
@@ -26,37 +30,42 @@ def get_pic(url):
   
   return result'''
 
+
 def scrape(date):
-  date = dt.strptime(date, '%d-%m-%Y').strftime("%y%m%d")
-  url = f"https://apod.nasa.gov/apod/ap{date}.html"
-  pic_url = get_pic(url)
-  return pic_url
+    formatted_date = date
+    date = dt.strptime(date, '%d-%m-%Y').strftime("%y%m%d")
+    url = f"https://apod.nasa.gov/apod/ap{date}.html"
+
+    return get_pic(formatted_date, url)
+
 
 @bot.event
-async def  on_ready():
+async def on_ready():
     print("ready")
-      
-        
+
 
 @bot.command()
 async def today(ctx):
-  now = dt.now()
-  now = now.strftime("%d-%m-%Y")
-  pic = scrape(now)
-  if len(pic) > 0:
-    await ctx.send(pic)
-  else:
-    await ctx.send(f"""***APOD is yet to be updated today!***""")
-  
+    now = dt.now()
+    now = now.strftime("%d-%m-%Y")
+    pic, title = scrape(now)
+    if len(pic) > 0:
+        await ctx.send(title)
+        await ctx.send(pic)
+    else:
+        await ctx.send(f"""***APOD is yet to be updated today!***""")
+
 
 @bot.command()
 async def archive(ctx):
-  date = ctx.message.content.split()[1]
-  pic = scrape(date)
-  if len(pic) > 0:
-    await ctx.send(pic)
-  else:
-    await ctx.send(f"""***APOD was not found for {date}!***""")
+    date = ctx.message.content.split()[1]
+    pic, title = scrape(date)
+    if len(pic) > 0:
+        await ctx.send(title)
+        await ctx.send(pic)
+    else:
+        await ctx.send(f"""***APOD was not found for {date}!***""")
+
 
 BOT_KEY = os.environ['BOT_KEY']
 keep_alive()
