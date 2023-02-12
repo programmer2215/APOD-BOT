@@ -8,14 +8,20 @@ from bs4 import BeautifulSoup as soup
 bot = commands.Bot(command_prefix="@", description="The description")
 
 
-def get_pic(date, url):
+def get_pic(date, url, info):
     data = req.get(url)
     parser = soup(data.text, 'html.parser')
     try:
         rel_url = parser.find('img')['src']
         title = parser.find('b').text
-        result = (f"https://apod.nasa.gov/{rel_url}",
+        result = (url, f"https://apod.nasa.gov/{rel_url}",
                   f"**[{date}] {title}**\n")
+        if info:
+            expln = parser.findAll('p')[2].text
+            expln = expln[:expln.index("Tomorrow's picture:")]
+        else:
+            expln = ''
+        result = result + (expln, )
     except:
         result = ()
 
@@ -31,12 +37,12 @@ def get_pic(date, url):
   return result'''
 
 
-def scrape(date):
+def scrape(date, info=False):
     formatted_date = date
     date = dt.strptime(date, '%d-%m-%Y').strftime("%y%m%d")
     url = f"https://apod.nasa.gov/apod/ap{date}.html"
 
-    return get_pic(formatted_date, url)
+    return get_pic(formatted_date, url, info)
 
 
 @bot.event
@@ -46,23 +52,39 @@ async def on_ready():
 
 @bot.command()
 async def today(ctx):
+    msg = ctx.message.content.split()
+    info = False
+    if 'info' in msg:
+        info = True
     now = dt.now()
     now = now.strftime("%d-%m-%Y")
-    pic, title = scrape(now)
+
+    url, pic, title, expln = scrape(now, info)
     if len(pic) > 0:
-        await ctx.send(title)
+        await ctx.send(url)
         await ctx.send(pic)
+        await ctx.send(title)
+        if expln:
+            await ctx.send(expln)
+
     else:
         await ctx.send(f"""***APOD is yet to be updated today!***""")
 
 
 @bot.command()
 async def archive(ctx):
-    date = ctx.message.content.split()[1]
-    pic, title = scrape(date)
+    msg = ctx.message.content.split()
+    date = msg[1]
+    info = False
+    if 'info' in msg:
+        info = True
+    url, pic, title, expln = scrape(date, info)
     if len(pic) > 0:
-        await ctx.send(title)
+        await ctx.send(url)
         await ctx.send(pic)
+        await ctx.send(title)
+        if expln:
+            await ctx.send(expln)
     else:
         await ctx.send(f"""***APOD was not found for {date}!***""")
 
